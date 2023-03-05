@@ -1,15 +1,39 @@
 const File = (sequelize, DataTypes) => {
-  const File = sequelize.define('File', {
-    name: DataTypes.STRING,
-    type: DataTypes.STRING,
-    size: DataTypes.INTEGER,
-    extension: DataTypes.STRING,
-    path: DataTypes.STRING
-  }, {});
-  File.associate = function(models) {
-    // associations can be defined here
+  const model = sequelize.define('File', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    type: {
+      type: DataTypes.STRING,
+    },
+    size: {
+      type: DataTypes.INTEGER,
+    },
+    extension: {
+      type: DataTypes.STRING,
+    },
+    path: {
+      type: DataTypes.STRING,
+    },
+  }, {
+    paranoid: true,
+  });
+  
+  model.associate = (models) => {
+    model.belongsToMany(models.User, {
+      through: 'UserFiles',
+      foreignKey: 'fileId',
+      as: 'users',
+    });
+    model.belongsToMany(models.Product, {
+      through: 'ProductFiles',
+      foreignKey: 'fileId',
+      as: 'products',
+    });
   };
-  return File;
-}
+
+  return model;
+};
 
 module.exports = File;

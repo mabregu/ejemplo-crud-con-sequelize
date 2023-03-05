@@ -25,6 +25,8 @@
 //         updatedAt: new Date(),
 //     },
 // ]
+// Exceptions
+const CustomError = require('../responses/Exceptions');
 // Product model sequelize
 const Product = require('../database/models').Product;
 const Category = require('../database/models').Category;
@@ -128,33 +130,31 @@ const productServices = {
     // Create a product
     createProduct: async (product) => {
         try {
-            // const newProduct = {
-            //     id: productsList.length + 1,
-            //     name: product.name,
-            //     description: product.description,
-            //     price: product.price,
-            //     createdAt: new Date(),
-            //     updatedAt: new Date(),
-            // };
-            // productsList.push(newProduct);
+            product.slug = product.name.toLowerCase().replace(/ /g, '-');
+            
             const newProduct = await Product.create(product);
             
             return newProduct;
         } catch (error) {
-            throw new Error(error.message);
+            // TODO: Create logger for errors
+            // let objError = {
+            //     code: error.code,
+            //     errno: error.errno,
+            //     sqlState: error.sqlState,
+            //     sqlMessage: error.sqlMessage,
+            //     sql: error.sql,
+            //     parameters: error.parameters,
+            // };
+            let message = error.message;
+            if (error.errors) {
+                message = error.errors[0].message;
+            }
+            throw new CustomError(`Error creating product: ${message}`, error, 500);
         }
     },
     // Update a product
     updateProduct: async (id, product) => {
         try {
-            // const index = productsList.findIndex((product) => product.id === parseInt(id));
-            // productsList[index] = {
-            //     ...productsList[index],
-            //     name: product.name,
-            //     description: product.description,
-            //     price: product.price,
-            //     updatedAt: new Date(),
-            // };
             let updatedProduct = await Product.update(product, {
                 where: {
                     id: id,
@@ -250,6 +250,16 @@ const productServices = {
             });
             
             return products;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    addFileToProduct: async (id, file) => {
+        try {
+            const product = productServices.getProductById(id);
+            const fileAdded = await product.addFile(file);
+            
+            return fileAdded;
         } catch (error) {
             throw new Error(error.message);
         }

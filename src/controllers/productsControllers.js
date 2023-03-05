@@ -8,11 +8,15 @@ const productsController = {
         try {
             const products = await Product.getAllProducts();
             res.status(200).json({
+                success: true,
                 data: products,
                 total: products.length,
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Get a product by id
@@ -20,10 +24,14 @@ const productsController = {
         try {
             const product = await Product.getProductById(req.params.id);
             res.status(200).json({
+                success: true,
                 data: product
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Get a product by slug
@@ -31,10 +39,14 @@ const productsController = {
         try {
             const product = await Product.getProductBySlug(req.params.slug);
             res.status(200).json({
+                success: true,
                 data: product
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Get a product by field
@@ -42,10 +54,14 @@ const productsController = {
         try {
             const product = await Product.getProductByField(req.params.field, req.params.value);
             res.status(200).json({
+                success: true,
                 data: product
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Create a new product
@@ -54,14 +70,19 @@ const productsController = {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        try {
+        try {            
             const product = await Product.createProduct(req.body);
+            
             res.status(201).json({
+                success: true,
                 message: 'Product created successfully',
-                data: product,
+                data: product
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Update a product
@@ -73,11 +94,15 @@ const productsController = {
         try {
             const product = await Product.updateProduct(req.params.id, req.body);
             res.status(200).json({
+                success: true,
                 message: 'Product updated successfully',
                 data: product,
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Soft delete a product
@@ -85,11 +110,15 @@ const productsController = {
         try {
             const product = await Product.softDeleteProduct(req.params.id);
             res.status(200).json({
+                success: true,
                 message: 'Product deleted successfully'
             });
                 
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Restore a product
@@ -97,11 +126,15 @@ const productsController = {
         try {
             const product = await Product.restoreProduct(req.params.id);
             res.status(200).json({
+                success: true,
                 message: 'Product restored successfully',
                 data: product,
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Delete a product
@@ -109,10 +142,14 @@ const productsController = {
         try {
             const product = await Product.deleteProduct(req.params.id);
             res.status(200).json({
+                success: true,
                 message: 'Product deleted successfully'
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
     // Search products with pagination
@@ -124,11 +161,15 @@ const productsController = {
             
             const products = await Product.getAllProductsPaginationSearch(page, limit, search);
             res.status(200).json({
+                success: true,
                 data: products,
                 total: products.length,
             });
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     },
 };
