@@ -1,5 +1,6 @@
 // File Services
 const FileModel = require('../database/models').File;
+const FileProduct = require('../database/models').FileProduct;
 const Product = require('../database/models').Product;
 const fileServices = {
     // Get all files
@@ -48,10 +49,28 @@ const fileServices = {
         }
     },
     // Create an array of files
-    createFiles: async (files) => {
+    createFiles: async (files, resource) => {
         try {
             const newFiles = await FileModel.bulkCreate(files);
+            
+            // Associate the files with the resource
+            newFiles.forEach(async (file) => {
+                await fileServices.setFileResource(file.id, resource);
+            });
+            
             return newFiles;
+        } catch (error) {
+            throw new Error(error);
+        }
+    },
+    setFileResource: async (fileId, resource) => {
+        try {
+            const fileProduct = await FileProduct.create({
+                fileId: fileId,
+                productId: resource.id,
+            });
+            
+            return fileProduct;
         } catch (error) {
             throw new Error(error);
         }

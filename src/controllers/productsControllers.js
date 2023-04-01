@@ -1,66 +1,100 @@
 // Products Controller
 const Product = require('../services/productsServices');
 const { validationResult } = require('express-validator');
+const Exceptions = require('../responses/Exceptions');
+const ApiDocument = require('../responses/ApiDocument');
 
 const productsController = {
     // Get all products
     getAllProducts: async (req, res) => {
         try {
+            const url = req.protocol + '://' + req.get('host') + req.originalUrl;
             const products = await Product.getAllProducts();
-            res.status(200).json({
-                success: true,
-                data: products,
-                total: products.length,
-            });
+            const apiDocument = new ApiDocument();
+            
+            apiDocument.addLink('self', url);
+            apiDocument.addMeta('total', products.length);
+            apiDocument.addData('products', products);
+            
+            res.status(200).json(apiDocument.getResponse());
         } catch (error) {
+            const exceptions = new Exceptions(
+                'Error getting products.',
+                error.message
+            );
+
             res.status(500).json({
-                success: false,
-                message: error.message
+                success: exceptions.getSuccess(),
+                error: exceptions.getCustomError()
             });
         }
     },
     // Get a product by id
     getProductById: async (req, res) => {
         try {
+            const url = req.protocol + '://' + req.get('host') + req.originalUrl;
+            const apiDocument = new ApiDocument();
             const product = await Product.getProductById(req.params.id);
-            res.status(200).json({
-                success: true,
-                data: product
-            });
+            
+            apiDocument.addLink('self', url);
+            apiDocument.addData('product', product);
+            
+            res.status(200).json(apiDocument.getResponse());
         } catch (error) {
+            const exceptions = new Exceptions(
+                'Error getting product.',
+                error.message
+            );
+            
             res.status(500).json({
-                success: false,
-                message: error.message
+                success: exceptions.getSuccess(),
+                error: exceptions.getCustomError()
             });
         }
     },
     // Get a product by slug
     getProductBySlug: async (req, res) => {
         try {
+            const url = req.protocol + '://' + req.get('host') + req.originalUrl;
+            const apiDocument = new ApiDocument();
             const product = await Product.getProductBySlug(req.params.slug);
-            res.status(200).json({
-                success: true,
-                data: product
-            });
+            
+            apiDocument.addLink('self', url);
+            apiDocument.addData('product', product);
+            
+            res.status(200).json(apiDocument.getResponse());
         } catch (error) {
+            const exceptions = new Exceptions(
+                'Error getting product.',
+                error.message
+            );
+            
             res.status(500).json({
                 success: false,
-                message: error.message
+                error: exceptions.getCustomError()
             });
         }
     },
     // Get a product by field
     getProductByField: async (req, res) => {
         try {
+            const url = req.protocol + '://' + req.get('host') + req.originalUrl;
+            const apiDocument = new ApiDocument();
             const product = await Product.getProductByField(req.params.field, req.params.value);
-            res.status(200).json({
-                success: true,
-                data: product
-            });
+            
+            apiDocument.addLink('self', url);
+            apiDocument.addData('product', product);
+            
+            res.status(200).json(apiDocument.getResponse());
         } catch (error) {
+            const exceptions = new Exceptions(
+                'Error getting product.',
+                error.message
+            );
+            
             res.status(500).json({
-                success: false,
-                message: error.message
+                success: exceptions.getSuccess(),
+                error: exceptions.getCustomError()
             });
         }
     },
@@ -68,20 +102,30 @@ const productsController = {
     createProduct: async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({
+                success: false,
+                errors: errors.array()
+            });
         }
-        try {            
+        
+        try {
+            const url = req.protocol + '://' + req.get('host') + req.originalUrl;
+            const apiDocument = new ApiDocument();
             const product = await Product.createProduct(req.body);
             
-            res.status(201).json({
-                success: true,
-                message: 'Product created successfully',
-                data: product
-            });
+            apiDocument.addLink('self', url);
+            apiDocument.addData('product', product);
+            
+            res.status(201).json(apiDocument.getResponse());
         } catch (error) {
+            const exceptions = new Exceptions(
+                'Error creating product.',
+                error.message
+            );
+            
             res.status(500).json({
-                success: false,
-                message: error.message
+                success: exceptions.getSuccess(),
+                error: exceptions.getCustomError()
             });
         }
     },

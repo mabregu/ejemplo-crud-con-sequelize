@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 const productsRoutes = require('./routes/productsRoutes');
 const filesRoutes = require('./routes/filesRoutes');
+const categoriesRoutes = require('./routes/categoriesRoutes');
 
 // Middlewares
 app.use(express.json());
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/products', productsRoutes);
 app.use('/api/files', filesRoutes);
+app.use('/api/categories', categoriesRoutes);
 
 // Error handling
 app.use((req, res, next) => {

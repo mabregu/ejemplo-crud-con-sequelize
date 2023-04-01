@@ -16,9 +16,7 @@ const File = (sequelize, DataTypes) => {
     path: {
       type: DataTypes.STRING,
     },
-  }, {
-    paranoid: true,
-  });
+  }, {});
   
   model.associate = (models) => {
     model.belongsToMany(models.User, {
@@ -27,9 +25,16 @@ const File = (sequelize, DataTypes) => {
       as: 'users',
     });
     model.belongsToMany(models.Product, {
-      through: 'ProductFiles',
+      through: 'FileProduct',
       foreignKey: 'fileId',
       as: 'products',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      hooks: true,
+    });
+    model.hasMany(models.FileProduct, {
+      foreignKey: 'fileId',
+      as: 'fileproducts',
     });
   };
 

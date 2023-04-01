@@ -1,12 +1,27 @@
 const FileProduct = (sequelize, DataTypes) => {
   const model = sequelize.define('FileProduct', {
-    productId: DataTypes.INTEGER,
-    fileId: DataTypes.INTEGER
-  }, {});
+    fileId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    productId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+  }, {
+    paranoid: true,
+  });
+  
   model.associate = (models) => {
-    model.belongsTo(models.File, { foreignKey: 'fileId' });
-    model.belongsTo(models.Product, { foreignKey: 'productId' });
-  }
+    model.belongsTo(models.File, {
+      foreignKey: 'fileId',
+      as: 'file',
+    });
+    model.belongsTo(models.Product, {
+      foreignKey: 'productId',
+      as: 'product',
+    });
+  };
 
   return model;
 }

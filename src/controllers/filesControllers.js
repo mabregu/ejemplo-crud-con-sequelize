@@ -1,33 +1,15 @@
 const FilesServices = require('../services/filesServices');
 const filesController = {
-    createFile: async (req, res) => {
-        try {
-            let files = req.files.map(file => {
-                return {
-                    name: file.filename,
-                    type: file.mimetype,
-                    size: file.size,
-                    extension: file.originalname.split('.').pop(),
-                    path: file.path
-                };
-            });
-
-            let newFiles = await FilesServices.createFile(files);
-
-            res.status(200).json({
-                success: true,
-                message: 'File created successfully',
-                data: newFiles
-            });
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: error.message
-            });
-        }
-    },
     uploadFile: async (req, res) => {
         try {
+            let resource = null;
+            if (req.params.resourceId) {
+                resource = {
+                    id: req.params.resourceId,
+                    type: req.params.resourceType
+                };
+            }
+            
             let files = req.files.map(file => {
                 return {
                     name: file.filename,
@@ -38,8 +20,10 @@ const filesController = {
                 };
             });
             
+            console.log("files", files);
+            
             // save files to database
-            let fileSaved = await FilesServices.createFiles(files);
+            let fileSaved = await FilesServices.createFiles(files, resource);
             
             res.status(200).json({
                 success: true,

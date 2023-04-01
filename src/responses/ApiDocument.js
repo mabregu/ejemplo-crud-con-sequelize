@@ -1,7 +1,5 @@
-class ApiDocument extends Response {
+class ApiDocument {
     constructor() {
-        super();
-        this.type = 'api-document';
         this.links = {};
         this.meta = {};
         this.data = {};
@@ -21,7 +19,7 @@ class ApiDocument extends Response {
     
     getResponse() {
         return {
-            type: this.type,
+            success: true,
             links: this.links,
             meta: this.meta,
             data: this.data,
@@ -31,7 +29,6 @@ class ApiDocument extends Response {
     getResponseWithStatus(status) {
         return {
             status: status,
-            type: this.type,
             links: this.links,
             meta: this.meta,
             data: this.data,

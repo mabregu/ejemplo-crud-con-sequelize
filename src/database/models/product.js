@@ -54,6 +54,18 @@ const Product = (sequelize, DataTypes) => {
       foreignKey: 'productStateId',
       as: 'productState',
     });
+    model.belongsToMany(models.File, {
+      through: 'FileProduct',
+      foreignKey: 'productId',
+      as: 'files',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      hooks: true,
+    });
+    model.hasMany(models.FileProduct, {
+      foreignKey: 'productId',
+      as: 'FileProduct',
+    });
   }
   
   return model;

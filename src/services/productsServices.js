@@ -32,6 +32,7 @@ const Product = require('../database/models').Product;
 const Category = require('../database/models').Category;
 const Provider = require('../database/models').Provider;
 const ProductState = require('../database/models').ProductState;
+const FileModel = require('../database/models').File;
 // Services for products
 const productServices = {
     // Get all products
@@ -56,6 +57,11 @@ const productServices = {
                         as: 'productState',
                         attributes: ['id', 'name'],
                     },
+                    {
+                        model: FileModel,
+                        as: 'files',
+                        attributes: ['id', 'name', 'path'],
+                    }
                 ],
             });
             
@@ -97,7 +103,6 @@ const productServices = {
     // Get a product by slug
     getProductBySlug: async (slug) => {
         try {
-            // const product = productsList.find((product) => product.slug === slug);
             const product = await Product.findOne({
                 where: {
                     slug: slug,
@@ -119,6 +124,11 @@ const productServices = {
                         as: 'productState',
                         attributes: ['id', 'name'],
                     },
+                    {
+                        model: FileModel,
+                        as: 'files',
+                        attributes: ['id', 'name', 'path'],
+                    }
                 ],
             });
             
@@ -205,12 +215,24 @@ const productServices = {
     // Delete a product
     deleteProduct: async (id) => {
         try {
-            // const index = productsList.findIndex((product) => product.id === parseInt(id));
-            // productsList.splice(index, 1);
+            let product = await Product.findByPk(id, {
+                include: [
+                    {
+                        association: 'files',
+                        attributes: ['id', 'name', 'path'],
+                    }
+                ],
+            });
+            
+            // Eliminar fisicamente los files del producto
+            product.files.forEach(async (file) => {
+                await file.destroy();
+            });
+            // Eliminar fisicamente el producto y sus relaciones con files y fileproducts
             const deletedProduct = await Product.destroy({
                 where: {
                     id: id,
-                },
+                }
             });
             
             return deletedProduct;

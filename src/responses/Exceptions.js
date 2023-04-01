@@ -1,9 +1,15 @@
-// custom exceptions
 class CustomError extends Error {
-    constructor(message, technicalMessage, code) {
-        super(message);
+    /**
+     * Custom error class
+     * @param {string} message
+     * @param {string} technicalMessage
+     * @param {number} code
+     */
+    constructor(message = 'An error occurred.', technicalMessage, code = 500) {
+        super((message) + ' Please try again later.');
         this.technicalMessage = technicalMessage;
         this.code = code;
+        this.success = false;
     }
     
     getTechnicalMessage() {
@@ -12,6 +18,10 @@ class CustomError extends Error {
     
     getCode() {
         return this.code;
+    }
+    
+    getSuccess() {
+        return this.success;
     }
     
     getCustomError() {
