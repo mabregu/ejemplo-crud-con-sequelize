@@ -18,6 +18,15 @@ module.exports = {
         allowNull: false,
         unique: true
       },
+      emailVerifiedAt: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
+      phone: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+      },
       password: {
         type: Sequelize.STRING,
         allowNull: false
@@ -31,6 +40,14 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+      },
+      rememberToken: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      socialNetworkId: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

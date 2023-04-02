@@ -61,6 +61,9 @@ const productServices = {
                         model: FileModel,
                         as: 'files',
                         attributes: ['id', 'name', 'path'],
+                        through: {
+                            attributes: [],
+                        },
                     }
                 ],
             });
@@ -128,6 +131,9 @@ const productServices = {
                         model: FileModel,
                         as: 'files',
                         attributes: ['id', 'name', 'path'],
+                        through: {
+                            attributes: [],
+                        },
                     }
                 ],
             });

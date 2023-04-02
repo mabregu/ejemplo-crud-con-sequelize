@@ -1,11 +1,14 @@
+const Exceptions = require('../responses/Exceptions');
+const ApiDocument = require('../responses/ApiDocument');
+
 const FilesServices = require('../services/filesServices');
 const filesController = {
     uploadFile: async (req, res) => {
         try {
             let resource = null;
-            if (req.params.resourceId) {
+            if (req.params.id) {
                 resource = {
-                    id: req.params.resourceId,
+                    id: req.params.id,
                     type: req.params.resourceType
                 };
             }
@@ -20,8 +23,6 @@ const filesController = {
                 };
             });
             
-            console.log("files", files);
-            
             // save files to database
             let fileSaved = await FilesServices.createFiles(files, resource);
             
@@ -31,26 +32,107 @@ const filesController = {
                 data: fileSaved
             });
         } catch (error) {
+            const exception = new Exceptions(
+                'Internal Server Error.',
+                error.message
+            );
+            
             res.status(500).json({
-                success: false,
-                message: error.message
+                success: exception.getSuccess(),
+                error: exception.getCustomError()
             });
         }
     },
-    deleteFile: (req, res) => {
+    getFiles: async (req, res) => {
         try {
-            let { id } = req.params;
+            let { resourceType } = req.params;
+            let files = await FilesServices.getAllFiles();
             
-            console.log(id);
+            if (!files) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Files not found'
+                });
+            }
             
             res.status(200).json({
                 success: true,
-                message: 'File deleted successfully',
+                message: 'Files found successfully',
+                data: files
             });
         } catch (error) {
+            const exception = new Exceptions(
+                'Internal Server Error.',
+                error.message
+            );
+            
             res.status(500).json({
-                success: false,
-                message: error.message
+                success: exception.getSuccess(),
+                error: exception.getCustomError()
+            });
+        }
+    },
+    getFile: async (req, res) => {
+        try {
+            let { id, resourceType } = req.params;
+            let file = await FilesServices.getFileById(id);
+            
+            if (!file) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'File not found'
+                });
+            }
+            
+            res.status(200).json({
+                success: true,
+                message: 'File found successfully',
+                data: file
+            });
+        } catch (error) {
+            const exception = new Exceptions(
+                'Internal Server Error.',
+                error.message
+            );
+            
+            res.status(500).json({
+                success: exception.getSuccess(),
+                error: exception.getCustomError()
+            });
+        }
+    },
+    deleteFile: async (req, res) => {
+        try {            
+            let { id } = req.params;
+            let file = await FilesServices.getFileById(id);
+            
+            if (!file) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'File not found'
+                });
+            }
+            
+            // delete file from database
+            let fileDeleted = await FilesServices.deleteFile(id);
+            // delete file from storage
+            if (fileDeleted) {
+                await FilesServices.deleteFileFromStorage(file.path);
+            }
+            
+            res.status(200).json({
+                success: true,
+                message: 'File deleted successfully'
+            });
+        } catch (error) {
+            const exception = new Exceptions(
+                'Internal Server Error.',
+                error.message
+            );
+            
+            res.status(500).json({
+                success: exception.getSuccess(),
+                error: exception.getCustomError()
             });
         }
     },

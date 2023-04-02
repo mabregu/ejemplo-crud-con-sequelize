@@ -1,3 +1,6 @@
+const { log } = require('console');
+const fs = require('fs');
+const path = require('path');
 // File Services
 const FileModel = require('../database/models').File;
 const FileProduct = require('../database/models').FileProduct;
@@ -11,7 +14,7 @@ const fileServices = {
                 include: [
                     {
                         model: Product,
-                        as: 'product',
+                        as: 'products',
                         attributes: ['id', 'name', 'slug', 'description', 'price', 'createdAt', 'updatedAt'],
                     },
                 ],
@@ -29,7 +32,7 @@ const fileServices = {
                 include: [
                     {
                         model: Product,
-                        as: 'product',
+                        as: 'products',
                         attributes: ['id', 'name', 'slug', 'description', 'price', 'createdAt', 'updatedAt'],
                     },
                 ],
@@ -111,6 +114,22 @@ const fileServices = {
                 force: true,
             });
             return fileDeleted;
+        } catch (error) {
+            throw new Error(error);
+        }
+    },
+    // Delete a file from storage
+    deleteFileFromStorage: async (path) => {
+        let fileWasDeleted = false;
+        try {
+            let fileExists = fs.existsSync(path);
+            
+            if (fileExists) {
+                fs.unlinkSync(path);
+                fileWasDeleted = true;
+            }
+            
+            return fileWasDeleted;
         } catch (error) {
             throw new Error(error);
         }

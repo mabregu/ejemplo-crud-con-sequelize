@@ -5,6 +5,7 @@ const app = express();
 const cors = require('cors');
 const PORT = process.env.PORT || 3000;
 
+const authRoutes = require('./routes/authRoutes');
 const productsRoutes = require('./routes/productsRoutes');
 const filesRoutes = require('./routes/filesRoutes');
 const categoriesRoutes = require('./routes/categoriesRoutes');
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
     res.send('Plantis API');
 });
 
+app.use('/api/', authRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/files', filesRoutes);
 app.use('/api/categories', categoriesRoutes);

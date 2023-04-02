@@ -4,10 +4,11 @@ const router = express.Router();
 const upload = require('../middlewares/multer');
 const filesController = require('../controllers/filesControllers');
 
+router.get('/:resourceType', filesController.getFiles);
+router.get('/:id/:resourceType', filesController.getFile);
 // Upload a file
-router.post('/:resourceId/:resourceType', upload, filesController.uploadFile);
-
+router.post('/:id/:resourceType', upload, filesController.uploadFile);
 // Delete a file
-router.delete('/:id', filesController.deleteFile);
+router.delete('/:id/:resourceType', filesController.deleteFile);
 
 module.exports = router;
