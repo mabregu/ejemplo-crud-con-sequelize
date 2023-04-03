@@ -21,31 +21,36 @@ const authController = {
             const user = await User.findOne({ where: { email } });
             
             if (!user) {
-                return res.status(400).json({ message: 'User not found' });
+                return res.status(400).json({
+                    success: false,
+                    message: 'User not found'
+                });
             }
             
             const validPassword = await bcrypt.compare(password, user.password);
             
             if (!validPassword) {
-                return res.status(400).json({ message: 'Invalid password' });
+                return res.status(400).json({
+                    success: false,
+                    message: 'Credentials are not valid'
+                });
             }
-            
+
             const payload = {
                 id: user.id,
                 email: user.email,
                 name: user.name,
-                role: user.role
+                roleId: user.roleId
             };
             
-            // const token = jwt.sign(payload, jwtSecret, {
-            //     algorithm: 'HS256',
-            //     expiresIn: jwtExpirySeconds
-            // });
+            const token = jwt.sign(payload, jwtSecret, {
+                algorithm: 'HS256',
+                expiresIn: jwtExpirySeconds
+            });
             
-            // res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000 });
+            res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000 });
             
-            // res.status(200).json({ message: 'Login successful', token });
-            res.status(200).json({ message: 'Login successful', payload });
+            res.status(200).json({ message: 'Login successful', token });
         } catch (error) {
             res.status(400).json({ message: error.message });
         }

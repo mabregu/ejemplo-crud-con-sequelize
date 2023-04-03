@@ -19,8 +19,7 @@ const validatorMiddlewares = {
             .bail()
         ,
     ],
-    // Validate user data
-    validateUserData: [
+    validateRegisterData: [
         body('name')
             .notEmpty()
             .withMessage('Name is required')
@@ -29,6 +28,24 @@ const validatorMiddlewares = {
             .withMessage('Name must be at least 3 characters long')
             .bail()
         ,
+        body('email')
+            .notEmpty()
+            .withMessage('Email is required')
+            .bail()
+            .isEmail()
+            .withMessage('Email is not valid')
+            .bail()
+        ,
+        body('password')
+            .notEmpty()
+            .withMessage('Password is required')
+            .bail()
+            .isLength({ min: 6 })
+            .withMessage('Password must be at least 6 characters long')
+            .bail()
+        ,
+    ],
+    validateLoginData: [
         body('email')
             .notEmpty()
             .withMessage('Email is required')

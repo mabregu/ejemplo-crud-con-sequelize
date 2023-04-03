@@ -2,14 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const { validateProductData } = require('../middlewares/validatorMiddlewares');
-
+const authMiddleware = require('../middlewares/authMiddleware');
 const productsController = require('../controllers/productsControllers');
 
 // Get all products
 router.get('/', productsController.getAllProducts);
 
 // Get a product by slug
-router.get('/:slug', productsController.getProductBySlug);
+router.get('/:slug', authMiddleware, productsController.getProductBySlug);
 
 // Create a new product
 router.post('/', validateProductData, productsController.createProduct);
