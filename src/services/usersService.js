@@ -1,6 +1,9 @@
 const User = require('../database/models').User;
-const bcrypt = require('bcrypt');
+require('dotenv').config()
 const jwt = require('jsonwebtoken');
+const jwtSecret = process.env.TOKEN_SECRET;
+const jwtExpirySeconds = process.env.TOKEN_EXPIRY_SECONDS || 300;
+const bcrypt = require('bcrypt');
 // const config = require('../config/config');
 const usersService = {
     // Get all users
@@ -69,11 +72,17 @@ const usersService = {
             throw new Error('Credentials do not match.');
         }
 
-        // const token = jwt.sign({
-        //     id: user.id
-        // }, config.jwtSecret, {
-        //     expiresIn: '1h'
-        // });
+        const payload = {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            roleId: user.roleId
+        };
+        
+        const token = jwt.sign(payload, jwtSecret, {
+            algorithm: 'HS256',
+            expiresIn: jwtExpirySeconds
+        });
 
         return {
             token,
