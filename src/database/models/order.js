@@ -1,7 +1,12 @@
 const Order = (sequelize, DataTypes) => {
   const model = sequelize.define('Order', {
     orderStateId: {
+      // "en proceso", "enviado", "entregado", "cancelado"
       type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    date: {
+      type: DataTypes.DATE,
       allowNull: false,
     },
     userId: {

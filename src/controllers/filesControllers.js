@@ -13,13 +13,14 @@ const filesController = {
                 };
             }
             
-            let files = req.files.map(file => {
+            let files = req.files.map((file, index) => {
                 return {
                     name: file.filename,
                     type: file.mimetype,
                     size: file.size,
                     extension: file.originalname.split('.').pop(),
-                    path: file.path
+                    path: file.path,
+                    order_file: file.order_file || index
                 };
             });
             
@@ -101,6 +102,45 @@ const filesController = {
             });
         }
     },
+    updateFile: async (req, res) => {
+        try {
+            let { id } = req.params;
+            let { name, type, size, extension, path, order_file } = req.body;
+            let file = await FilesServices.getFileById(id);
+            
+            if (!file) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'File not found'
+                });
+            }
+            
+            let fileUpdated = await FilesServices.updateFile(id, {
+                name,
+                type,
+                size,
+                extension,
+                path,
+                order_file
+            });
+            
+            res.status(200).json({
+                success: true,
+                message: 'File updated successfully',
+                data: fileUpdated
+            });
+        } catch (error) {
+            const exception = new Exceptions(
+                'Internal Server Error.',
+                error.message
+            );
+            
+            res.status(500).json({
+                success: exception.getSuccess(),
+                error: exception.getCustomError()
+            });
+        }
+    },
     deleteFile: async (req, res) => {
         try {            
             let { id } = req.params;
@@ -135,7 +175,7 @@ const filesController = {
                 error: exception.getCustomError()
             });
         }
-    },
+    }
 }
 
 module.exports = filesController;

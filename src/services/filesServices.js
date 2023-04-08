@@ -70,7 +70,7 @@ const fileServices = {
         try {
             const fileProduct = await FileProduct.create({
                 fileId: fileId,
-                productId: resource.id,
+                productId: resource.id
             });
             
             return fileProduct;
@@ -130,6 +130,40 @@ const fileServices = {
             }
             
             return fileWasDeleted;
+        } catch (error) {
+            throw new Error(error);
+        }
+    },
+    orderFiles: async (files, resource) => {
+        try {
+            // Get the files that are already associated with the resource
+            let resourceFiles = await fileServices.getResourceFiles(resource.id);
+            
+            // Get the files that are not associated with the resource
+            let filesToAssociate = files.filter((file) => {
+                return !resourceFiles.find((resourceFile) => {
+                    return resourceFile.id === file.id;
+                });
+            });
+            
+            // Associate the files with the resource
+            filesToAssociate.forEach(async (file) => {
+                await fileServices.setFileResource(file.id, resource);
+            });
+            
+            // Get the files that are not in the request
+            let filesToDelete = resourceFiles.filter((resourceFile) => {
+                return !files.find((file) => {
+                    return resourceFile.id === file.id;
+                });
+            });
+            
+            // Delete the files that are not in the request
+            filesToDelete.forEach(async (file) => {
+                await fileServices.deleteFile(file.id);
+            });
+            
+            return true;
         } catch (error) {
             throw new Error(error);
         }

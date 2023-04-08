@@ -16,6 +16,9 @@ const File = (sequelize, DataTypes) => {
     path: {
       type: DataTypes.STRING,
     },
+    order_file: {
+      type: DataTypes.INTEGER
+    },
   }, {});
   
   model.associate = (models) => {

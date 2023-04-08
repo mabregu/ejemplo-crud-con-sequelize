@@ -38,7 +38,6 @@ const productServices = {
     // Get all products
     getAllProducts: async () => {
         try {
-            // const products = productsList;
             const products = await Product.findAll({
                 attributes: ['id', 'name', 'slug', 'description', 'price', 'createdAt', 'updatedAt'],
                 include: [
@@ -60,11 +59,14 @@ const productServices = {
                     {
                         model: FileModel,
                         as: 'files',
-                        attributes: ['id', 'name', 'path'],
+                        attributes: ['id', 'name', 'path', 'order_file'],
                         through: {
                             attributes: [],
                         },
                     }
+                ],
+                order: [
+                    ['files', 'order_file', 'ASC'],
                 ],
             });
             
@@ -130,11 +132,14 @@ const productServices = {
                     {
                         model: FileModel,
                         as: 'files',
-                        attributes: ['id', 'name', 'path'],
+                        attributes: ['id', 'name', 'path', 'order_file'],
                         through: {
                             attributes: [],
                         },
                     }
+                ],
+                order: [
+                    ['files', 'order_file', 'ASC'],
                 ],
             });
             

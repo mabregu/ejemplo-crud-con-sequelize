@@ -10,5 +10,7 @@ router.get('/:id/:resourceType', filesController.getFile);
 router.post('/:id/:resourceType', upload, filesController.uploadFile);
 // Delete a file
 router.delete('/:id/:resourceType', filesController.deleteFile);
+// Update a file
+router.put('/update/:id', filesController.updateFile);
 
 module.exports = router;

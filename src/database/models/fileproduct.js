@@ -7,7 +7,7 @@ const FileProduct = (sequelize, DataTypes) => {
     productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
+    }
   }, {
     paranoid: true,
   });

@@ -9,7 +9,8 @@ const productsController = require('../controllers/productsControllers');
 router.get('/', productsController.getAllProducts);
 
 // Get a product by slug
-router.get('/:slug', authMiddleware, productsController.getProductBySlug);
+// router.get('/:slug', authMiddleware, productsController.getProductBySlug);
+router.get('/:slug', productsController.getProductBySlug);
 
 // Create a new product
 router.post('/', validateProductData, productsController.createProduct);

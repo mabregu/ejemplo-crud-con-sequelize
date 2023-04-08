@@ -25,6 +25,9 @@ module.exports = {
       path: {
         type: Sequelize.STRING
       },
+      order_file: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
